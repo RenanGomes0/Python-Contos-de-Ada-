@@ -3,7 +3,7 @@ from sql_alchemy import banco
 class LivroModel(banco.Model):
     __tablename__ = 'livros'
     
-    id = banco.Column(banco.INT, primary_key=True)
+    id = banco.Column(banco.Integer, primary_key=True)
     titulo = banco.Column(banco.String(80))
     autor = banco.Column(banco.String(80))
     editora = banco.Column(banco.String(80))

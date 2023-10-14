@@ -7,15 +7,21 @@ class UsuarioModel(banco.Model):
     user_id = banco.Column(banco.Integer, primary_key=True)
     login = banco.Column(banco.String(40))
     senha = banco.Column(banco.String(40))
+    nome = banco.Column(banco.String(40))
+    tipo = banco.Column(banco.Integer)
 
-    def __init__(self, login, senha):
+    def __init__(self, login, senha, nome, tipo):
         self.login = login
         self.senha = senha
+        self.nome = nome
+        self.tipo = tipo
 
     def json(self):
         return {
             'user_id': self.user_id,
-            'login': self.login
+            'login': self.login,
+            'nome': self.nome,
+            'tipo': self.tipo
             }
      
     @classmethod
@@ -36,11 +42,11 @@ class UsuarioModel(banco.Model):
         banco.session.add(self)
         banco.session.commit()
         
-    def update_usuario(self, nome, login, senha,tipo_usuario):
+    def update_usuario(self, nome, login, senha,tipo):
         self.nome = nome
         self.login = login
         self.senha = senha
-        self.tipo_usuario = tipo_usuario
+        self.tipo = tipo
     
     def delete_usuario(self):
         banco.session.delete(self)

@@ -27,12 +27,12 @@ class Usuario(Resource):
     
 #/cadastro
 class RegistroUsuario(Resource):
-     def post(self):
+    def post(self):
         atributos = reqparse.RequestParser()
         atributos.add_argument('login', type=str, required=True, help="Tem que ter um login")
         atributos.add_argument('senha', type=str, required=True, help="Tem que ter uma senha")
-        
-        
+        atributos.add_argument('nome', type=str, required=True, help="Tem que ter um nome")
+        atributos.add_argument('tipo', type=str, required=True, help="Tem que ter um tipo")
    
     
         dados = atributos.parse_args()
@@ -46,18 +46,18 @@ class RegistroUsuario(Resource):
        
        
 
- #   def put(self, user_id):       
-  #      dados = Usuario.argumentos.parse_args()
-   #     usuario_encontrado = UsuarioModel.pesquisa(user_id)
-    #    if usuario_encontrado:
-     #       usuario_encontrado.update_usuario(**dados)
-      #      usuario_encontrado.save_usuario()
-       #     return usuario_encontrado.json(), 200
-        #livro = UsuarioModel(user_id, **dados)        
-        #try:
-         #   livro.save_usuario()
-        #except:
-         #   return{'massage':'houve um erro ao salvar'}, 500
-        #return livro.json()(), 201 
+    def put(self, user_id):       
+        dados = Usuario.argumentos.parse_args()
+        usuario_encontrado = UsuarioModel.pesquisa(user_id)
+        if usuario_encontrado:
+           usuario_encontrado.update_usuario(**dados)
+           usuario_encontrado.save_usuario()
+        return usuario_encontrado.json(), 200
+        livro = UsuarioModel(user_id, **dados)        
+        try:
+            livro.save_usuario()
+        except:
+            return{'massage':'houve um erro ao salvar'}, 500
+        return livro.json()(), 201 
     
     
