@@ -1,8 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.usuario import UsuarioModel
 from flask_jwt_extended import create_access_token
-from werkzeug.security import safe_join
-
+from secrets import compare_digest
 
 atributos = reqparse.RequestParser()     
 atributos.add_argument('login', type=str, required=True, help="Tem que ter um login")
@@ -45,9 +44,10 @@ class Usuario(Resource):
 #/cadastro
 class RegistroUsuario(Resource):
     def post(self):
+          
+        dados = atributos.parse_args()
         atributos.add_argument('nome', type=str, required=True, help="Tem que ter um nome")
         atributos.add_argument('tipo', type=int, required=True, help="Tem que ter um tipo")
-        dados = atributos.parse_args()
         
         if UsuarioModel.pesquisa_login(dados['login']):
             return {'message':'Login já em uso'}
@@ -66,10 +66,10 @@ class UserLogin(Resource):
         
         usuario = UsuarioModel.pesquisa_login(dados['login'])
         
-        if usuario and safe_join(usuario.senha, dados['senha']):
+        if usuario and compare_digest(usuario.senha, dados['senha']):
             token_de_acesso = create_access_token(identity=usuario.user_id)
-            return{'access_token' : token_de_acesso},200
-        return{'message':'Nome de usuario ou senha está errado'}, 401
+            return {'access_token': token_de_acesso}, 200
+        return {'message': 'The username or password is incorrect.'}, 401
 
       
     
