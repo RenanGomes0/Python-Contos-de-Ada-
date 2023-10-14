@@ -16,7 +16,7 @@ class Usuario(Resource):
    
 
     def delete(self, user_id):
-        usuario = UsuarioModel.pesquisa(user_id)
+        usuario = UsuarioModel.pesquisa_usuario(user_id)
         if usuario:
             try:
                 usuario.delete_usuario()
@@ -47,17 +47,15 @@ class RegistroUsuario(Resource):
        
 
     def put(self, user_id):       
-        dados = Usuario.argumentos.parse_args()
+        dados = Usuario.argumentos.parse_args()        
         usuario_encontrado = UsuarioModel.pesquisa(user_id)
         if usuario_encontrado:
            usuario_encontrado.update_usuario(**dados)
            usuario_encontrado.save_usuario()
         return usuario_encontrado.json(), 200
-        livro = UsuarioModel(user_id, **dados)        
-        try:
-            livro.save_usuario()
-        except:
-            return{'massage':'houve um erro ao salvar'}, 500
-        return livro.json()(), 201 
+        usuario = UsuarioModel(user_id,**dados)
+        usuario.save_usuario()
+        return usuario.json(), 201
+      
     
     

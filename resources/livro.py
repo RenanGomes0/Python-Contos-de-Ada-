@@ -47,7 +47,7 @@ class Atributo(Resource):
             livro.save_livro()
         except:
             return{'massage':'houve um erro ao salvar'}, 500
-        return livro.json()(), 201 
+        return livro.json(), 201 
     
 
     def delete(self, id):
