@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.livro import LivroModel
+from flask_jwt_extended import jwt_required
 
 class Livros(Resource):
     def get(self):
@@ -20,7 +21,7 @@ class Atributo(Resource):
             return livro.json()        
         return {'message':'cadeee???'} , 404 #not found     
     
-
+    @jwt_required()
     def post(self, id):
         if  LivroModel.pesquisa(id) :
             return {"mesage":"O livro com o id "'{}'" Já existe cabeção".format(id)}, 400
@@ -34,7 +35,7 @@ class Atributo(Resource):
         return livro.json()
        
        
-
+    @jwt_required()
     def put(self, id):       
         dados = Atributo.argumentos.parse_args()
         livro_encontrado = LivroModel.pesquisa(id)
@@ -49,7 +50,7 @@ class Atributo(Resource):
             return{'massage':'houve um erro ao salvar'}, 500
         return livro.json(), 201 
     
-
+    @jwt_required()
     def delete(self, id):
         livro = LivroModel.pesquisa(id)
         if livro:
