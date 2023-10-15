@@ -3,7 +3,7 @@ from models.usuario import UsuarioModel
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from secrets import compare_digest
 from BLACKLIST import BLACKLIST
-
+from resources.hash_password import hash_password, check_hashed_password
 
 atributos = reqparse.RequestParser()     
 atributos.add_argument('nome', type=str, required=True, help="Tem que ter um nome")
@@ -52,7 +52,10 @@ class RegistroUsuario(Resource):
         atributos.add_argument('status', type=int, required=False)
         atributos.add_argument('tipo', type=str, required=True, help="Tem que ter um tipo")
           
-        dados = atributos.parse_args()              
+        dados = atributos.parse_args()       
+        if (len(dados['senha'])) < 8:
+            return {"message": "The password length must be at least 8 digits."}
+        dados['senha'] = hash_password(dados['senha'])       
         
         if UsuarioModel.pesquisa_nome(dados['nome']):
             return {'message':'Nome já em uso'}
@@ -69,10 +72,11 @@ class UserLogin(Resource):
     def post(cls):
         dados = atributos.parse_args()        
         usuario = UsuarioModel.pesquisa_nome(dados['nome'])        
-        if usuario and compare_digest(usuario.senha, dados['senha']):
+        if usuario and check_hashed_password(usuario.senha, dados['senha']):
             token_de_acesso = create_access_token(identity=usuario.user_id)
             return {'access_token': token_de_acesso}, 200
         return {'message': 'The username or password is incorrect.'}, 401
+    
 
 #Logout de usuario
 
