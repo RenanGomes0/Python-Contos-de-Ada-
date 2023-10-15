@@ -1,27 +1,29 @@
 from sql_alchemy import banco
 
-
 class UsuarioModel(banco.Model):
     __tablename__ = 'usuarios'
-
-    user_id = banco.Column(banco.Integer, primary_key=True)
-    login = banco.Column(banco.String(40))
-    senha = banco.Column(banco.String(40))
+    
+    user_id = banco.Column(banco.Integer, primary_key=True)    
     nome = banco.Column(banco.String(40))
-    tipo = banco.Column(banco.Integer)
+    senha = banco.Column(banco.String(40))
+    email = email.Column(banco.String(80))
+    status = status.Column(banco.Integer)
+    tipo = banco.Column(banco.String(40))
 
-    def __init__(self, login, senha, nome, tipo):
-        self.login = login
-        self.senha = senha
+    def __init__(self,nome, senha, email, status, tipo):
         self.nome = nome
+        self.senha = senha
+        self.email = email
+        self.status = status
         self.tipo = tipo
 
     def json(self):
         return {
             'user_id': self.user_id,
-            'login': self.login,
             'nome': self.nome,
-            'tipo': self.tipo
+            'email': self.email,
+            'tipo': self.tipo,
+            'status':self.status
             }
      
     @classmethod
@@ -32,20 +34,21 @@ class UsuarioModel(banco.Model):
         return None
     
     @classmethod
-    def pesquisa_login(cls, login):
-        login = cls.query.filter_by(login=login).first()
-        if login:
-            return login
+    def pesquisa_nome(cls, nome):
+        nome = cls.query.filter_by(nome=nome).first()
+        if nome:
+            return nome
         return None
     
     def save_usuario(self):
         banco.session.add(self)
         banco.session.commit()
         
-    def update_usuario(self, nome, login, senha,tipo):
+    def update_usuario(self, nome, senha, email, status, tipo):
         self.nome = nome
-        self.login = login
         self.senha = senha
+        self.email = email
+        self.status = status
         self.tipo = tipo
     
     def delete_usuario(self):

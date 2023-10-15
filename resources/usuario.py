@@ -5,8 +5,11 @@ from secrets import compare_digest
 from BLACKLIST import BLACKLIST
 
 atributos = reqparse.RequestParser()     
-atributos.add_argument('login', type=str, required=True, help="Tem que ter um login")
+atributos.add_argument('nome', type=str, required=True, help="Tem que ter um nome")
 atributos.add_argument('senha', type=str, required=True, help="Tem que ter uma senha")
+atributos.add_argument('email', type=str, nullable=False, help="Tem que ter um email")
+atributos.add_argument('status', type=int, required=False)
+atributos.add_argument('tipo', type=str, required=True, help="Tem que ter um tipo")
 
    
 
@@ -47,16 +50,14 @@ class Usuario(Resource):
 class RegistroUsuario(Resource):
     def post(self):
           
-        dados = atributos.parse_args()
-        atributos.add_argument('nome', type=str, required=True, help="Tem que ter um nome")
-        atributos.add_argument('tipo', type=int, required=True, help="Tem que ter um tipo")
+        dados = atributos.parse_args()              
         
-        if UsuarioModel.pesquisa_login(dados['login']):
-            return {'message':'Login já em uso'}
+        if UsuarioModel.pesquisa_nome(dados['nome']):
+            return {'message':'Nome já em uso'}
         
         usuario = UsuarioModel(**dados)
         usuario.save_usuario()
-        return {'mesage':"usuario criado"},201
+        return {'message':"usuario criado"},201
        
        
 #login  de usuario
@@ -66,7 +67,7 @@ class UserLogin(Resource):
     def post(cls):
         dados = atributos.parse_args()
         
-        usuario = UsuarioModel.pesquisa_login(dados['login'])
+        usuario = UsuarioModel.pesquisa_nome(dados['nome'])
         
         if usuario and compare_digest(usuario.senha, dados['senha']):
             token_de_acesso = create_access_token(identity=usuario.user_id)

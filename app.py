@@ -1,6 +1,6 @@
 from flask import Flask, jsonify   
 from flask_restful import  Api
-from resources.livro import Livros, Atributo
+from resources.item import Item, Atributo
 from resources.usuario import Usuario, RegistroUsuario, UserLogin, UserLogout
 from flask_jwt_extended import JWTManager
 from BLACKLIST import BLACKLIST
@@ -25,8 +25,8 @@ def verificablacklist(self,token):
 def token_de_acesso_invalidado(jwt_header, jwt_payload):
     return jsonify ({'message':'Você esta deslogado'})
     
-api.add_resource(Livros,'/livros')     
-api.add_resource(Atributo,'/livros/<int:id>')
+api.add_resource(Item,'/Items')     
+api.add_resource(Atributo,'/items/<int:id>')
 api.add_resource(Usuario,'/usuarios/<int:user_id>')
 api.add_resource(RegistroUsuario,'/cadastro')
 api.add_resource(UserLogin,'/login')
