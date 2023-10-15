@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.item import ItemModel
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt
 
         
 class Item(Resource):
@@ -28,6 +28,7 @@ class Atributo(Resource):
     class Registro(Resource):
         @jwt_required()
         def post(self):                  
+           
             dados = Atributo.argumentos.parse_args()
             item = ItemModel(**dados)
             try:

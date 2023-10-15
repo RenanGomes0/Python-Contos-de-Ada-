@@ -5,6 +5,7 @@ from secrets import compare_digest
 from BLACKLIST import BLACKLIST
 from resources.hash_password import hash_password, check_hashed_password
 
+
 atributos = reqparse.RequestParser()     
 atributos.add_argument('nome', type=str, required=True, help="Tem que ter um nome")
 atributos.add_argument('senha', type=str, required=True, help="Tem que ter uma senha")
@@ -24,18 +25,20 @@ class Usuario(Resource):
             return usuario.json()        
         return {'message':'cadeee???'} , 404 #not found       
 
+# Mudança nos usuarios
    
     @jwt_required()
     def delete(self, user_id):
         usuario = UsuarioModel.pesquisa_usuario(user_id)
-        if usuario:
-            try:
-                usuario.delete_usuario()
-            except:
-                return{'massage':'não foi possivel deletar'},500 
-            return {'message':'usuario deletado'}
-        return{'message':'O usuario não existe'},404
-    
+        jwt = get_jwt()
+        if jwt.get("tipo") !=1:
+            return{"message":"O usuario não é administrador."}
+        try:
+            usuario.delete_usuario()
+        except:
+            return{'massage':'não foi possivel deletar'},500 
+        return {'message':'usuario deletado'}
+            
     @jwt_required() 
     def put(self, user_id):       
         dados = Usuario.argumentos.parse_args()        
@@ -46,8 +49,10 @@ class Usuario(Resource):
         return usuario_encontrado.json(), 200
      
 #/cadastro
+
 class RegistroUsuario(Resource):
     def post(self):
+        
         atributos.add_argument('email', type=str, nullable=False, help="Tem que ter um email")
         atributos.add_argument('status', type=int, required=False)
         atributos.add_argument('tipo', type=str, required=True, help="Tem que ter um tipo")
@@ -59,23 +64,22 @@ class RegistroUsuario(Resource):
         
         if UsuarioModel.pesquisa_nome(dados['nome']):
             return {'message':'Nome já em uso'}
-        
+            
         usuario = UsuarioModel(**dados)
         usuario.save_usuario()
         return {'message':"usuario criado"},201
-       
-       
+        
 #login  de usuario
-class UserLogin(Resource):
-    
+class UserLogin(Resource):    
     @classmethod
     def post(cls):
         dados = atributos.parse_args()        
-        usuario = UsuarioModel.pesquisa_nome(dados['nome'])        
-        if usuario and check_hashed_password(usuario.senha, dados['senha']):
-            token_de_acesso = create_access_token(identity=usuario.user_id)
-            return {'access_token': token_de_acesso}, 200
-        return {'message': 'The username or password is incorrect.'}, 401
+        usuario = UsuarioModel.pesquisa_nome(dados['nome']) 
+        claims = {"tipo":usuario.tipo,"user_id": usuario.user_id}    
+        if usuario and check_hashed_password(dados['senha'], usuario.senha): 
+            access_token = create_access_token(identity = usuario.user_id,additional_claims=claims)
+            return {'access_token': access_token}, 200
+        return{'message': 'Senha ou usuario incorretos.'}, 401
     
 
 #Logout de usuario
