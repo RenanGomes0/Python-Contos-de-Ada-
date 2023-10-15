@@ -4,6 +4,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from secrets import compare_digest
 from BLACKLIST import BLACKLIST
 
+
 atributos = reqparse.RequestParser()     
 atributos.add_argument('nome', type=str, required=True, help="Tem que ter um nome")
 atributos.add_argument('senha', type=str, required=True, help="Tem que ter uma senha")

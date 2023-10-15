@@ -1,13 +1,13 @@
 from sql_alchemy import banco
 
-class UsuarioModel(banco.Model):
-    __tablename__ = 'usuarios'
-    
+
+class UsuarioModel(banco.Model):   
+    __tablename__ = 'usuarios'    
     user_id = banco.Column(banco.Integer, primary_key=True)    
     nome = banco.Column(banco.String(40))
     senha = banco.Column(banco.String(40))
-    email = email.Column(banco.String(80))
-    status = status.Column(banco.Integer)
+    email = banco.Column(banco.String(80))
+    status = banco.Column(banco.Integer)
     tipo = banco.Column(banco.String(40))
 
     def __init__(self,nome, senha, email, status, tipo):
