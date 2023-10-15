@@ -25,11 +25,11 @@ def verificablacklist(self,token):
 def token_de_acesso_invalidado(jwt_header, jwt_payload):
     return jsonify ({'message':'Você esta deslogado'})
     
-api.add_resource(Item,'/Items')     
+api.add_resource(Item,'/items')     
 api.add_resource(Atributo,'/items/<int:id>')
-api.add_resource(Usuario,'/usuarios/<int:user_id>')
-api.add_resource(RegistroUsuario,'/cadastro')
-api.add_resource(UserLogin,'/login')
+api.add_resource(Usuario,'/users/<int:user_id>')
+api.add_resource(RegistroUsuario,'/users/signup')
+api.add_resource(UserLogin,'/users/login')
 api.add_resource(UserLogout,'/logout')
 
 if __name__ == '__main__':

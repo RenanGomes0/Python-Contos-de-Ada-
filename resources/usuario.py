@@ -8,9 +8,7 @@ from BLACKLIST import BLACKLIST
 atributos = reqparse.RequestParser()     
 atributos.add_argument('nome', type=str, required=True, help="Tem que ter um nome")
 atributos.add_argument('senha', type=str, required=True, help="Tem que ter uma senha")
-atributos.add_argument('email', type=str, nullable=False, help="Tem que ter um email")
-atributos.add_argument('status', type=int, required=False)
-atributos.add_argument('tipo', type=str, required=True, help="Tem que ter um tipo")
+
 
    
 
@@ -18,7 +16,7 @@ class Usuario(Resource):
     def get(self):
         return {'usuarios': [usuario.json() for usuario in UsuarioModel.query.all()]} 
     
-#/usuarios/{user_id}
+#/users/{user_id}
    
     def get(self, user_id):
         usuario = UsuarioModel.pesquisa_usuario(user_id)
@@ -50,6 +48,9 @@ class Usuario(Resource):
 #/cadastro
 class RegistroUsuario(Resource):
     def post(self):
+        atributos.add_argument('email', type=str, nullable=False, help="Tem que ter um email")
+        atributos.add_argument('status', type=int, required=False)
+        atributos.add_argument('tipo', type=str, required=True, help="Tem que ter um tipo")
           
         dados = atributos.parse_args()              
         
@@ -66,10 +67,8 @@ class UserLogin(Resource):
     
     @classmethod
     def post(cls):
-        dados = atributos.parse_args()
-        
-        usuario = UsuarioModel.pesquisa_nome(dados['nome'])
-        
+        dados = atributos.parse_args()        
+        usuario = UsuarioModel.pesquisa_nome(dados['nome'])        
         if usuario and compare_digest(usuario.senha, dados['senha']):
             token_de_acesso = create_access_token(identity=usuario.user_id)
             return {'access_token': token_de_acesso}, 200
