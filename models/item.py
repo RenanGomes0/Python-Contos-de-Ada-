@@ -12,8 +12,7 @@ class ItemModel(banco.Model):
     status = banco.Column(banco.Integer)
     id_vendedo = banco.Column(banco.Integer)
     
-    def __init__(self, id, titulo, autor, categoria, preco, descricao, status, id_vendedor): 
-        self.id = id
+    def __init__(self, titulo, autor, categoria, preco, descricao, status, id_vendedor): 
         self.titulo = titulo
         self.autor = autor
         self.categoria = categoria
