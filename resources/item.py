@@ -12,7 +12,7 @@ class Atributo(Resource):
     argumentos = reqparse.RequestParser()   
     argumentos.add_argument('titulo', type=str, required=True, help="O Produto tem que ter um titulo")
     argumentos.add_argument('autor',type=str, required=True, help="O Produto tem que ter um autor")
-    argumentos.add_argument('categoria',type=str, required=True, help="O Produto tem que ter uma categoria")
+    argumentos.add_argument('categoria',type=str, required=True, help="O Produto tem que ter uma categoria (livro, jornal, revista ou periodico)")
     argumentos.add_argument('preco',type=float, required=True, help="O Produto tem que ter um preço")
     argumentos.add_argument('descricao',type=str, required=True,help = "O Produto tem que ter uma descrição")    
     argumentos.add_argument('status',type=int, required=False)
