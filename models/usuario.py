@@ -1,63 +1,68 @@
 from sql_alchemy import banco
 from datetime import datetime
-#from resources.extend_date import extend_license
 
-class UsuarioModel(banco.Model):   
-    __tablename__ = 'usuarios'    
-    user_id = banco.Column(banco.Integer, primary_key=True)    
-    nome = banco.Column(banco.String(40))
-    senha = banco.Column(banco.String(40))
-    email = banco.Column(banco.String(80))
-    status = banco.Column(banco.Integer)
-    tipo = banco.Column(banco.Integer)
-    datainicio = banco.Column(banco.String(30))
-
-    def __init__(self,nome, senha, email, status, tipo):
-        self.nome = nome
-        self.senha = senha
+class UserModel(banco.Model):
+    __tablename__ = 'users'
+    user_id = banco.Column(banco.Integer, primary_key = True)
+    login = banco.Column (banco.String(40))
+    password = banco.Column (banco.String)
+    email = banco.Column (banco.String)
+    status = banco.Column (banco.Integer)
+    type = banco.Column(banco.Integer)
+    createdIn = banco.Column(banco.String(30))
+    deleted_at = banco.Column(banco.String, default=None, nullable=True)
+   
+    
+    def __init__(self, login, password, email, status, type):
+        self.login = login
+        self.password = password
         self.email = email
         self.status = status
-        self.tipo = tipo
+        self.type = type
+        self.createdIn = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
 
     def json(self):
-        return {
-            'user_id': self.user_id,
-            'nome': self.nome,
-            'senha':self.senha,
-            'email': self.email,
-            'tipo': self.tipo,
-            'status':self.status
-            }
+            return {
+                'user_id': self.user_id,
+                'login': self.login,
+                'password':self.password,
+                'status': self.status,
+                'email': self.email,                
+                'type': self.type,
+                'createdIn': self.createdIn,
+                }
      
     @classmethod
-    def pesquisa_usuario(cls, user_id):
-        usuario = cls.query.filter_by(user_id=user_id).first()
-        if usuario:
-            return usuario
+    def find_user(cls, user_id):
+        user = cls.query.filter_by(user_id = user_id).first() #SELECT * FROM users WHERE user_id = user_id
+        if user:
+            return user
         return None
+    
     
     @classmethod
-    def pesquisa_nome(cls, nome):
-        nome = cls.query.filter_by(nome=nome).first()
-        if nome:
-            return nome
+    def find_by_login(cls, login):
+        user = cls.query.filter_by(login = login).first()
+        if user:
+            return user
         return None
     
-    def save_usuario(self):
+    def save_user(self):
         banco.session.add(self)
         banco.session.commit()
         
-    def update_usuario(self, nome, senha, email, status, tipo):
-        self.nome = nome
-        self.senha = senha
-        self.email = email
-        self.status = status
-        self.tipo = tipo
+    def update_user(self,user):
+        self.login = user.login
+        self.password = user.password
+        self.type = user.type       
+       
     
-    def delete_usuario(self):
-        self.status = 0
+    def delete_user(self):
+        self.status = 0 
+        self.deleted_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         try: 
-            banco.session.commit
+            banco.session.commit()
         except Exception as e:
             raise Exception(str(e))
         

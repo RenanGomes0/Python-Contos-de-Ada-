@@ -1,7 +1,7 @@
 from flask import Flask, jsonify   
 from flask_restful import  Api
 from resources.item import Item, Atributo
-from resources.usuario import Usuario, RegistroUsuario, UserLogin, UserLogout,AdminLogin
+from resources.usuario import User, UserRegister, UserLogin, UserLogout, AdminLogin,UpdateUser
 from flask_jwt_extended import JWTManager
 from BLACKLIST import BLACKLIST
 
@@ -28,11 +28,15 @@ def token_de_acesso_invalidado(jwt_header, jwt_payload):
 api.add_resource(Item,'/items')
 api.add_resource(Atributo.Registro,'/items')     
 api.add_resource(Atributo,'/items/<int:id>')
-api.add_resource(Usuario,'/users/<int:user_id>')
-api.add_resource(RegistroUsuario,'/users/signup')
+#Usuario
+api.add_resource(UserRegister,'/users/signup')
 api.add_resource(UserLogin,'/users/login')
 api.add_resource(UserLogout,'/logout')
+#ADM
+api.add_resource(User,'/admin/users/<int:user_id>')
 api.add_resource(AdminLogin,'/admin/login')
+api.add_resource(UpdateUser,'/users/<int:user_id>')
+
 
 if __name__ == '__main__':
     from sql_alchemy import banco
