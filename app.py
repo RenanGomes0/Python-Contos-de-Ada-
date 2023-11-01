@@ -1,7 +1,7 @@
 from flask import Flask, jsonify   
 from flask_restful import  Api
 from resources.item import Item, Atributo
-from resources.usuario import Usuario, RegistroUsuario, UserLogin, UserLogout
+from resources.usuario import Usuario, RegistroUsuario, UserLogin, UserLogout,AdminLogin
 from flask_jwt_extended import JWTManager
 from BLACKLIST import BLACKLIST
 
@@ -32,6 +32,7 @@ api.add_resource(Usuario,'/users/<int:user_id>')
 api.add_resource(RegistroUsuario,'/users/signup')
 api.add_resource(UserLogin,'/users/login')
 api.add_resource(UserLogout,'/logout')
+api.add_resource(AdminLogin,'/admin/login')
 
 if __name__ == '__main__':
     from sql_alchemy import banco

@@ -1,5 +1,6 @@
 from sql_alchemy import banco
-
+from datetime import datetime
+#from resources.extend_date import extend_license
 
 class UsuarioModel(banco.Model):   
     __tablename__ = 'usuarios'    
@@ -8,7 +9,8 @@ class UsuarioModel(banco.Model):
     senha = banco.Column(banco.String(40))
     email = banco.Column(banco.String(80))
     status = banco.Column(banco.Integer)
-    tipo = banco.Column(banco.String(40))
+    tipo = banco.Column(banco.Integer)
+    datainicio = banco.Column(banco.String(30))
 
     def __init__(self,nome, senha, email, status, tipo):
         self.nome = nome
@@ -21,6 +23,7 @@ class UsuarioModel(banco.Model):
         return {
             'user_id': self.user_id,
             'nome': self.nome,
+            'senha':self.senha,
             'email': self.email,
             'tipo': self.tipo,
             'status':self.status
@@ -52,6 +55,9 @@ class UsuarioModel(banco.Model):
         self.tipo = tipo
     
     def delete_usuario(self):
-        banco.session.delete(self)
-        banco.session.commit()
+        self.status = 0
+        try: 
+            banco.session.commit
+        except Exception as e:
+            raise Exception(str(e))
         

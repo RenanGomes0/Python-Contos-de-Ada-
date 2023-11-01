@@ -9,8 +9,7 @@ from resources.hash_password import hash_password, check_hashed_password
 atributos = reqparse.RequestParser()     
 atributos.add_argument('nome', type=str, required=True, help="Tem que ter um nome")
 atributos.add_argument('senha', type=str, required=True, help="Tem que ter uma senha")
-
-
+atributos.add_argument('tipo', type=int, required=True, help="Tem que ter um tipo")
    
 
 class Usuario(Resource):
@@ -54,8 +53,8 @@ class RegistroUsuario(Resource):
     def post(self):
         
         atributos.add_argument('email', type=str, nullable=False, help="Tem que ter um email")
-        atributos.add_argument('status', type=int, required=False)
-        atributos.add_argument('tipo', type=str, required=True, help="Tem que ter um tipo")
+        atributos.add_argument('status', type=int, required=False, default=1)
+       
           
         dados = atributos.parse_args()       
         if (len(dados['senha'])) < 8:
@@ -80,7 +79,6 @@ class UserLogin(Resource):
             access_token = create_access_token(identity = usuario.user_id,additional_claims=claims)
             return {'access_token': access_token}, 200
         return{'message': 'Senha ou usuario incorretos.'}, 401
-    
 
 #Logout de usuario
 
@@ -92,4 +90,16 @@ class UserLogout (Resource):
         return {'message': 'Logged out successfully.'}, 200
  
     
-    
+  #ADMIN
+  
+class AdminLogin(Resource):    
+    @classmethod
+    def post(cls):
+        dados = atributos.parse_args()        
+        usuario = UsuarioModel.pesquisa_nome(dados['nome']) 
+        claims = {"tipo":usuario.tipo,"user_id": usuario.user_id}    
+        if usuario and check_hashed_password(dados['senha'], usuario.senha): 
+            access_token = create_access_token(identity = usuario.user_id,additional_claims=claims)
+            return {'access_token': access_token}, 200
+        return{'message': 'Senha ou usuario incorretos.'}, 401
+        
