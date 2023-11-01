@@ -50,45 +50,41 @@ class UserRegister(Resource):
         user.save_user()
         return {'message':'User created successfully.'}, 201
     
-class UpdateUser(Resource):  
-    @jwt_required()
-    def patch(self):
-        jwt = get_jwt()
-        if jwt.get("user_type") != 0:
-            atributes = reqparse.RequestParser()
-            atributes.add_argument('login', type=str)     
-            atributes.add_argument('password', type=str)  
-            atributes.add_argument('new_password', type=str)
-            atributes.add_argument('confirm_password',type=str)
-            dados = atributes.parse_args()
-            user = UserModel.find_user(jwt.get("user_id"))
-        
-        if jwt.get("user_type") != 0:
-            return {"message": "Admin privilege required."},401
+class UpdateUser(Resource):
+    def put(self, user_id):
+        atributes = reqparse.RequestParser()
+        atributes.add_argument('login', type=str)
+        atributes.add_argument('password', type=str)
+        atributes.add_argument('new_password', type=str)
+        atributes.add_argument('confirm_password', type=str)
+        dados = atributes.parse_args()
+        user = UserModel.find_user(user_id)
+
         if dados['login']:
-            if (dados["login"] != jwt.get("login") and UserModel.find_by_login(dados['login']) is not None): 
-                return {"message": "The login '{}' already exists.".format(dados['login'])}, 400
+            if (dados["login"] != user.login and UserModel.find_by_login(dados['login']) is not None):
+                return {"message": "The login '{}' already exists."}, 400
             else:
                 user.login = dados['login']
-        if (dados['new_password']!=dados['confirm_password'] or \
+        if (dados['new_password'] != dados['confirm_password'] or \
         ((dados['new_password'] is None and dados['confirm_password'] is not None) or \
         (dados['new_password'] is not None and dados['confirm_password'] is None))):
             if (dados["password"]) is None:
-                return{'message': "Password is needed to confirm this operation."}
+                return {'message': "Password is needed to confirm this operation."}
             else:
                 return {"message": "The new password confirmation didn't match."}, 400
         elif dados['password'] is not None:
-            if check_hashed_password(dados['password'], user.password) == False: 
-                return {'message':'Password is not correct.'}, 401
+            if check_hashed_password(dados['password'], user.password) == False:
+                return {'message': 'Password is not correct.'}, 401
             else:
                 if dados['new_password'] is not None:
                     if (len(dados['new_password'])) < 8:
                         return {"message": "The password length must be at least 8 digits."}, 400
                     user.password = hash_password(dados['new_password'])
-     
+
         user.update_user(user)
         user.save_user()
-        return {'message':'User updated successfully.'}
+        return {'message': 'User updated successfully.'}
+
             
         
         

@@ -32,10 +32,11 @@ api.add_resource(Atributo,'/items/<int:id>')
 api.add_resource(UserRegister,'/users/signup')
 api.add_resource(UserLogin,'/users/login')
 api.add_resource(UserLogout,'/logout')
+api.add_resource(UpdateUser,'/users/<int:user_id>')
 #ADM
 api.add_resource(User,'/admin/users/<int:user_id>')
 api.add_resource(AdminLogin,'/admin/login')
-api.add_resource(UpdateUser,'/users/<int:user_id>')
+
 
 
 if __name__ == '__main__':
