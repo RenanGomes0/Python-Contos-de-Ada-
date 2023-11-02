@@ -1,7 +1,7 @@
 from flask import Flask, jsonify   
 from flask_restful import  Api
 from resources.item import Item, Atributo
-from resources.usuario import User, UserRegister, UserLogin, UserLogout, AdminLogin,UpdateUser,UpdateUserAdmin
+from resources.usuario import User, UserRegister, UserLogin, UserLogout, AdminLogin,UpdateUser,UpdateUserAdmin,Users
 from flask_jwt_extended import JWTManager
 from BLACKLIST import BLACKLIST
 
@@ -35,6 +35,7 @@ api.add_resource(UserLogout,'/logout')
 api.add_resource(UpdateUser,'/users/<int:user_id>')
 #ADM
 api.add_resource(User,'/admin/users/<int:user_id>')
+api.add_resource(Users,'/admin/users')
 api.add_resource(AdminLogin,'/admin/login')
 api.add_resource(UpdateUserAdmin,'/admin/users/<int:user_id>')
 

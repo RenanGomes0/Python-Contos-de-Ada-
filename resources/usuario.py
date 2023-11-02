@@ -5,31 +5,7 @@ from BLACKLIST import BLACKLIST
 from resources.hash_password import hash_password, check_hashed_password
 
 
-class User(Resource):
-    @jwt_required()
-    def get(self, user_id):
-        jwt = get_jwt()
-        if jwt.get("user_type") != 0:
-            return {"message": "Admin privilege required."},401
-        user = UserModel.find_user(user_id)
-        if user:
-            return user.json()
-        return {'message': 'User not found.'}, 404 #not found
-    
-   
-    @jwt_required()
-    def delete(self, user_id):
-        jwt = get_jwt()
-        if jwt.get("user_type") != 0:
-            return {"message": "Admin privilege required."},401
-        user = UserModel.find_user(user_id)
-        if user:
-            try:
-                user.delete_user()
-            except:
-               return {'message': 'An internal error ocurred trying to delete user.'}, 500 
-            return {'message': 'User deleted.'}
-        return{'message':'User not found.'},404    
+
         
 
 class UserRegister(Resource):
@@ -119,6 +95,36 @@ class UserLogout (Resource):
 
 
 #ADM
+class User(Resource):
+    @jwt_required()
+    def get(self, user_id):
+        jwt = get_jwt()
+        if jwt.get("user_type") != 0:
+            return {"message": "Admin privilege required."},401
+        user = UserModel.find_user(user_id)
+        if user:
+            return user.json()
+        return {'message': 'User not found.'}, 404 #not found 
+    
+   
+    @jwt_required()
+    def delete(self, user_id):
+        jwt = get_jwt()
+        if jwt.get("user_type") != 0:
+            return {"message": "Admin privilege required."},401
+        user = UserModel.find_user(user_id)
+        if user:
+            try:
+                user.delete_user()
+            except:
+               return {'message': 'An internal error ocurred trying to delete user.'}, 500 
+            return {'message': 'User deleted.'}
+        return{'message':'User not found.'},404    
+ 
+class Users(Resource):
+    def get(self):
+        return {'users': [user.json() for user in UserModel.query.all()]} 
+    
 class AdminLogin(Resource):
     @classmethod
     def post(cls):
