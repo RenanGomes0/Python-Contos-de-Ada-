@@ -115,12 +115,7 @@ class UserLogout (Resource):
         BLACKLIST.add(jwt_id)
         return {'message': 'Logged out successfully.'}, 200
 
-class PasswordReset(Resource):
-    @jwt_required()
-    def post():
-        pass  #é esperado que seja possível realizar a alteração de senha para usuários autenticados e não autenticados
-              #para esse, é necessário inserir user, senha antiga, senha nova e confirmar senha nova. Tambem adicionar 
-              # lógica para verificar se é o próprio user que está mudando a senha e/ou se é um admin
+
 
 
 #ADM
@@ -144,3 +139,42 @@ class AdminLogin(Resource):
             access_token = create_access_token(identity = user.user_id,additional_claims=claims)
             return {'access_token': access_token}, 200
         return{'message': 'The username or password is incorrect.'}, 401
+
+class UpdateUserAdmin(Resource):
+    @jwt_required()
+    def put(self,user_id):
+        jwt = get_jwt()
+        atributes = reqparse.RequestParser()
+        atributes.add_argument('login', type=str)     
+        atributes.add_argument('password', type=str)  
+        atributes.add_argument('new_password', type=str)
+        atributes.add_argument('confirm_password',type=str)
+        atributes.add_argument('type', type=int)
+        dados = atributes.parse_args()
+        user = UserModel.find_user(jwt.get("user_id"))
+        if jwt.get("user_type") != 0:
+            return {"message": "Admin privilege required."},401
+        if dados['login']:
+            if (dados["login"] != jwt.get("login") and UserModel.find_by_login(dados['login']) is not None): 
+                return {"message": "The login '{}' already exists.".format(dados['login'])}, 400
+            else:
+                user.login = dados['login']
+        if (dados['new_password']!=dados['confirm_password'] or \
+        ((dados['new_password'] is None and dados['confirm_password'] is not None) or \
+        (dados['new_password'] is not None and dados['confirm_password'] is None))):
+            if (dados["password"]) is None:
+                return{'message': "Password is needed to confirm this operation."}
+            else:
+                return {"message": "The new password confirmation didn't match."}, 400
+        elif dados['password'] is not None:
+            if check_hashed_password(dados['password'], user.password) == False: 
+                return {'message':'Password is not correct.'}, 401
+            else:
+                if dados['new_password'] is not None:
+                    if (len(dados['new_password'])) < 8:
+                        return {"message": "The password length must be at least 8 digits."}, 400
+                    user.password = hash_password(dados['new_password'])
+       
+        user.update_user(user)
+        user.save_user()
+        return {'message':'User updated successfully.'}
