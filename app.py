@@ -26,6 +26,8 @@ def token_de_acesso_invalidado(jwt_header, jwt_payload):
     return jsonify ({'message':'Você esta deslogado'})
 #itens    
 api.add_resource(Item,'/itens')
+api.add_resource(Item.Categoria,'/categorias')
+api.add_resource(Item.Titulo,'/itens/titulo/<string:titulo>')
 api.add_resource(Atributo.Registro,'/itens')     
 api.add_resource(Atributo.Update,'/itens/<int:id>')
 api.add_resource(Atributo.DeleteId,'/itens/<int:id>')

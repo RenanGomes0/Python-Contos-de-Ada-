@@ -3,24 +3,64 @@ from models.item import ItemModel
 from flask_restful import Resource
 from models.usuario import UserModel
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
-
-
-        
+       
 class Item(Resource):
     @jwt_required()
-    def get(self, id):
+    def get(self):
         jwt = get_jwt()
         if jwt.get("user_type") != 0:
             return {"message": "Admin privilege required."}, 401
         user = UserModel.find_user(jwt["user_id"])
         if not user:
             return {"message": "User not found."}, 404
-        item = ItemModel.pesquisa(id)
-        if item:
-            return {'produtos': [Item.json() for Item in ItemModel.query.all()]} 
-        return {'message': 'Item not found.'}, 404
-  
-        
+
+        # Alteração nesta linha para incluir a condição de status=1
+        items = ItemModel.query.filter_by(status=1).all()
+
+        if items:
+            return {'produtos': [item.json() for item in items]} 
+        return {'message': 'No items found with status 1.'}, 404
+    
+    class Titulo(Resource):
+        @jwt_required()
+        def get(self, titulo):
+            jwt = get_jwt()
+            if jwt.get("user_type") != 0:
+                return {"message": "Admin privilege required."}, 401
+            user = UserModel.find_user(jwt["user_id"])
+            if not user:
+                return {"message": "User not found."}, 404
+
+            # Modificação para garantir que apenas itens com status diferente de 0 sejam incluídos
+            itens = ItemModel.query.filter(ItemModel.titulo.ilike(f"%{titulo}%"), ItemModel.status != 0).all()
+
+            if itens:
+                return {'produtos': [item.json() for item in itens]}
+            return {'message': 'No items found with the given title and status not equal to 0.'}, 404
+ 
+
+    class Categoria(Resource):
+        @jwt_required()
+        def get(self):
+            jwt = get_jwt()
+            if jwt.get("user_type") != 0:
+                return {"message": "Admin privilege required."}, 401
+            user = UserModel.find_user(jwt["user_id"])
+            if not user:
+                return {"message": "User not found."}, 404
+
+            categorias = (
+                ItemModel.query
+                .filter(ItemModel.status != 0)
+                .distinct(ItemModel.categoria)
+                .all()
+            )
+
+            if categorias:
+                return {'categorias': list(set(categoria.categoria for categoria in categorias))}
+            return {'message': 'No items found with status not equal to 0.'}, 404
+
+      
     
 
 class Atributo(Resource):

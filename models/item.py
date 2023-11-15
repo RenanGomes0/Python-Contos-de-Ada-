@@ -41,9 +41,15 @@ class ItemModel(banco.Model):
      
     @classmethod
     def pesquisa(cls, id):
-        item = cls.query.filter_by(id=id, status=1).first()
+        item = cls.query.filter_by(id=id).first()
         if item:
             return item
+        return None
+    @classmethod
+    def pesquisa(cls, categoria):
+        categoria = cls.query.filter_by(categoria=categoria).all()
+        if categoria:
+            return categoria
         return None
     @classmethod
     def pesquisa_por_categoria(cls, categoria):
@@ -51,6 +57,17 @@ class ItemModel(banco.Model):
         if itens:
             return itens
         return None
+    @classmethod
+    def pesquisa_por_titulo(cls, titulo):
+    # Usando ilike para uma pesquisa case-insensitive e parcial
+        itens = cls.query.filter(cls.titulo.ilike(f"%{titulo}%")).all()
+        if itens:
+            return itens
+        return None
+    @classmethod
+    def pesquisa_categoria(cls, categoria):
+        itens = cls.query.filter_by(categoria=categoria).all()
+        return itens   
         
     def save_item(self):
         banco.session.add(self)
