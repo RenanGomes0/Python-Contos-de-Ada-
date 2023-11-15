@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import  Api
 from resources.item import Item, Atributo
 from resources.usuario import User, UserRegister, UserLogin, UserLogout, AdminLogin,UpdateUser,UpdateUserAdmin,Users
+from resources.transactions import Transactions
 from flask_jwt_extended import JWTManager
 from BLACKLIST import BLACKLIST
 
@@ -32,7 +33,8 @@ api.add_resource(Atributo.Registro,'/itens')
 api.add_resource(Atributo.Update,'/itens/<int:id>')
 api.add_resource(Atributo.DeleteId,'/itens/<int:id>')
 api.add_resource(Atributo.DeleteCategoria, '/itens/categoria/<string:categoria>')
-
+#Transações
+api.add_resource(Transactions,'/transactions')
 
 #Usuario
 api.add_resource(UserRegister,'/users/signup')

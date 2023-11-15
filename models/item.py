@@ -45,12 +45,15 @@ class ItemModel(banco.Model):
         if item:
             return item
         return None
+    
     @classmethod
-    def pesquisa(cls, categoria):
-        categoria = cls.query.filter_by(categoria=categoria).all()
-        if categoria:
-            return categoria
+    def pesquisa_vendedor(cls, id):
+        item = cls.query.filter_by(id=id).first()
+        if item:
+            return item.vendedor_id
         return None
+    
+ 
     @classmethod
     def pesquisa_por_categoria(cls, categoria):
         itens = cls.query.filter_by(categoria=categoria, status=1).all()

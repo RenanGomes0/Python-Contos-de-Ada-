@@ -106,25 +106,23 @@ class Atributo(Resource):
             except Exception as e:
                 return {'message': f'Houve um erro ao salvar: {str(e)}'}, 500
 
-    class Update(Resource):
+    class Update(Resource):       
         @jwt_required()
         def put(self, id):
             dados = Atributo.argumentos.parse_args()
             item_encontrado = ItemModel.pesquisa(id)
+
             if item_encontrado:
-                item_encontrado.update_item(**dados)
                 try:
+                    item_encontrado.update_item(**dados)
                     item_encontrado.save_item()
                     return item_encontrado.json(), 200
                 except Exception as e:
                     return {'message': f'Houve um erro ao atualizar: {str(e)}'}, 500
+            else:
+                return {'message': 'Item não encontrado'}, 404
 
-            item = ItemModel(id, **dados)
-            try:
-                item.save_item()
-                return item.json(), 201
-            except Exception as e:
-                return {'message': f'Houve um erro ao salvar: {str(e)}'}, 500
+
             
     class DeleteId(Resource):
         @jwt_required()
