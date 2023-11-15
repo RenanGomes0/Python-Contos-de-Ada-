@@ -98,16 +98,17 @@ class Atributo(Resource):
                     return {'message': f'Não foi possível deletar: {str(e)}'}, 500
 
             return {'message': 'Produto não existe'}, 404
-    class DeleteCategoria(Resource):    
+    
+    class DeleteCategoria(Resource):
         @jwt_required()
-        
         def delete(self, categoria):
-            item = ItemModel.pesquisa(categoria)
-            if item:
+            itens = ItemModel.pesquisa_por_categoria(categoria)
+            if itens:
                 try:
-                    item.delete_item()
+                    for item in itens:
+                        item.delete_item()
                     return {'message': 'Produtos deletados'}
                 except Exception as e:
                     return {'message': f'Não foi possível deletar: {str(e)}'}, 500
-
-            return {'message': 'Produtos não existem'}, 404
+            else:
+                return {'message': 'Produtos não existem'}, 404

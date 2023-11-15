@@ -2,7 +2,7 @@ from sql_alchemy import banco
 from datetime import datetime
 
 class ItemModel(banco.Model):
-    __tablename__ = 'items'
+    __tablename__ = 'itens'
     
     id = banco.Column(banco.Integer, primary_key=True)
     titulo = banco.Column(banco.String(80))
@@ -41,11 +41,17 @@ class ItemModel(banco.Model):
      
     @classmethod
     def pesquisa(cls, id):
-        item = cls.query.filter_by(id=id).first()
+        item = cls.query.filter_by(id=id, status=1).first()
         if item:
             return item
         return None
-    
+    @classmethod
+    def pesquisa_por_categoria(cls, categoria):
+        itens = cls.query.filter_by(categoria=categoria, status=1).all()
+        if itens:
+            return itens
+        return None
+        
     def save_item(self):
         banco.session.add(self)
         banco.session.commit()
@@ -66,4 +72,3 @@ class ItemModel(banco.Model):
             banco.session.commit()
         except Exception as e:
             raise Exception(str(e))
-        
