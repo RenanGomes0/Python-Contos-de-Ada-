@@ -1,4 +1,5 @@
 from sql_alchemy import banco
+from datetime import datetime
 
 class ItemModel(banco.Model):
     __tablename__ = 'items'
@@ -9,9 +10,12 @@ class ItemModel(banco.Model):
     categoria = banco.Column(banco.String(80))
     preco = banco.Column(banco.Float(precision=2))
     descricao = banco.Column(banco.String(120))
-    status = banco.Column(banco.Integer)
-    id_vendedo = banco.Column(banco.Integer)
-    
+    status = banco.Column(banco.Integer)    
+    id_vendedor = banco.Column(banco.Integer)
+    createdIn = banco.Column(banco.String(30))
+    deleted_at = banco.Column(banco.String, default=None, nullable=True)
+   
+   
     def __init__(self, titulo, autor, categoria, preco, descricao, status, id_vendedor): 
         self.titulo = titulo
         self.autor = autor
@@ -20,7 +24,7 @@ class ItemModel(banco.Model):
         self.descricao = descricao
         self.status = status
         self.id_vendedor = id_vendedor
-    
+        self.createdIn = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     def json(self):
         return{
@@ -31,7 +35,7 @@ class ItemModel(banco.Model):
             'preco' : self.preco,
             'descricao' : self.descricao,
             'status' : self.status,
-            'id_vendedor' : self.id_vendedo
+            'id_vendedor' : self.id_vendedor
             
         }
      
@@ -55,8 +59,11 @@ class ItemModel(banco.Model):
         self.status = status
         self.id_vendedo = id_vendedor
     
-    def delete_item(self):
-        banco.session.delete(self)
-        banco.session.commit()
-        
+    def delete_item(self):           
+        self.status = 0 
+        self.deleted_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        try: 
+            banco.session.commit()
+        except Exception as e:
+            raise Exception(str(e))
         
