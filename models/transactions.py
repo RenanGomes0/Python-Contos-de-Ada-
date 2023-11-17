@@ -27,6 +27,14 @@ class TransactionsModel(banco.Model):
             'item_id': self.item_id,  # Corrigido de categoria para id_item
             'preco': self.preco                      
         }
+    
+    @classmethod
+    def pesquisa_transactions(cls, id):
+        transactions = cls.query.filter_by(id=id).first()
+        if transactions:
+            return transactions
+        return None
+
 
     def save_transaction(self):
         banco.session.add(self)

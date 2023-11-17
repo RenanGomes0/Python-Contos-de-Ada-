@@ -35,7 +35,7 @@ api.add_resource(Atributo.DeleteId,'/itens/<int:id>')
 api.add_resource(Atributo.DeleteCategoria, '/itens/categoria/<string:categoria>')
 #Transações
 api.add_resource(Transactions.Registro_transactions,'/transactions')
-
+api.add_resource(Transactions.Pesquisa_transactions,'/transactions')
 #Usuario
 api.add_resource(UserRegister,'/users/signup')
 api.add_resource(UserLogin,'/users/login')

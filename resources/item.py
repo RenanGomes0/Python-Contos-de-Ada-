@@ -10,16 +10,21 @@ class Item(Resource):
         jwt = get_jwt()
         if jwt.get("user_type") != 0:
             return {"message": "Admin privilege required."}, 401
+
         user = UserModel.find_user(jwt["user_id"])
         if not user:
             return {"message": "User not found."}, 404
 
-        # Alteração nesta linha para incluir a condição de status=1
-        items = ItemModel.query.filter_by(status=1).all()
+        try:
+            # Adicione a condição de status=1 diretamente na consulta
+            items = ItemModel.query.filter_by(status=1).all()
 
-        if items:
-            return {'produtos': [item.json() for item in items]} 
-        return {'message': 'No items found with status 1.'}, 404
+            if items:
+                return {'produtos': [item.json() for item in items]} 
+            return {'message': 'No items found with status 1.'}, 404
+        except Exception as e:
+            return {'message': f'Houve um erro ao buscar os itens: {str(e)}'}, 500
+
     
     class Titulo(Resource):
         @jwt_required()
