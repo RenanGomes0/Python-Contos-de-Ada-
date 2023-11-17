@@ -43,8 +43,30 @@ class Transactions(Resource):
                 return {"message": "User not found."}, 404
 
             try:
-                # Adicione a condição de status=1 diretamente na consulta
-                transactions = TransactionsModel.query.all()
+                
+                transactions = TransactionsModel.pesquisa_transactions()
+
+                if transactions:
+                    return {'transactions': [transaction.json() for transaction in transactions]} 
+                return {'message': 'No transactions found.'}, 404
+            except Exception as e:
+                return {'message': f'Houve um erro ao buscar as transações: {str(e)}'}, 500
+
+    
+    class Pesquisa_transactions_comprador_id(Resource):
+      class Pesquisa_transactions(Resource):
+        @jwt_required()
+        def get(self):
+            jwt = get_jwt()
+            if jwt.get("user_type") != 0:
+                return {"message": "Admin privilege required."}, 401
+            user = UserModel.find_user(jwt["user_id"])
+            if not user:
+                return {"message": "User not found."}, 404
+
+            try:
+                
+                transactions = TransactionsModel.pesquisa_transactions()
 
                 if transactions:
                     return {'transactions': [transaction.json() for transaction in transactions]} 

@@ -29,8 +29,16 @@ class TransactionsModel(banco.Model):
         }
     
     @classmethod
-    def pesquisa_transactions(cls, id):
-        transactions = cls.query.filter_by(id=id).first()
+    def pesquisa_transactions(cls):
+        transactions = cls.query.filter_by().all()
+        if transactions:
+            return transactions
+        return None
+    
+    
+    @classmethod
+    def Pesquisa_transactions_comprador_id(cls, comprador_id):
+        transactions = cls.query.filter_by(comprador_id = comprador_id).all()
         if transactions:
             return transactions
         return None
