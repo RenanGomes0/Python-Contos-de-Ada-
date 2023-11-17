@@ -47,6 +47,13 @@ class ItemModel(banco.Model):
         return None
     
     @classmethod
+    def pesquisar_item_por_id(cls, item_id):
+        item = cls.query.filter_by(id=item_id).first()
+        if item:
+            return item
+        return None
+    
+    @classmethod
     def pesquisa_vendedor(cls, id):
         item = cls.query.filter_by(id=id).first()
         if item:

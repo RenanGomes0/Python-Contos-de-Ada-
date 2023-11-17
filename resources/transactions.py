@@ -4,32 +4,28 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.item import ItemModel
 
 
-class Atributo(Resource):
-    argumentos = reqparse.RequestParser()
-    argumentos.add_argument('item_id', type=int, required=True, help="")
-    argumentos.add_argument('valor', type=str, required=True, help="")
-    argumentos.add_argument('id_comprador', type=int, required=False)
-
-
 class Transactions(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('item_id', type=int, required=True, help='Item ID é obrigatório')
 
-    class Registro(Resource):
+    class Registro_transactions(Resource):
         @jwt_required()
         def post(self):
             user_id = get_jwt_identity()
-            dados = Atributo.argumentos.parse_args()
+            dados = Transactions.parser.parse_args()
 
-            vendedor_id = ItemModel.pesquisa_vendedor(dados['item_id'])
-            dados['id_comprador'] = user_id
-            dados['id_vendedor'] = vendedor_id
-            dados['item_id'] = dados['item_id']  
+            item = ItemModel.pesquisar_item_por_id(dados['item_id'])
 
-            
-            transaction = TransactionsModel(**dados)
-            
+            if item is None:
+                return {'message': 'Item não encontrado para o ID fornecido'}, 404
+
+            dados['comprador_id'] = user_id
+            dados['vendedor_id'] = item.id_vendedor
+            dados['preco'] = item.preco  
+
             try:
+              
+                transaction = TransactionsModel(**dados)
                 transaction.save_transaction()
                 return transaction.json(), 201
             except Exception as e:
